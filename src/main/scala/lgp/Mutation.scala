@@ -1,7 +1,7 @@
 package lgp
 
-import lgp.Model.Individuo
+import lgp.Model.Individual
 
 trait Mutation {
-  def mutation(individuo: Individuo): Individuo
+  def mutation(individual: Individual): Individual
 }

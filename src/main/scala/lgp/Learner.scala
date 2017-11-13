@@ -1,19 +1,19 @@
 package lgp
 
-import lgp.Learner.EvaluatedIndividuo
-import lgp.Model.Individuo
+import lgp.Learner.EvaluatedIndividual
+import lgp.Model.Individual
 
 object Learner {
-  case class EvaluatedIndividuo(individuo: Individuo, cost: Double)
+  case class EvaluatedIndividual(individual: Individual, cost: Double)
 }
 
 trait Learner[SAMPLE] {
 
   def learn(
-             individuos: List[Individuo],
+             population: List[Individual],
              samples: List[SAMPLE],
              crossovers: Vector[Crossover],
              mutations: Vector[Mutation],
              evaluator: Evaluator[SAMPLE]
-           ): (List[EvaluatedIndividuo])
+           ): (List[EvaluatedIndividual])
 }

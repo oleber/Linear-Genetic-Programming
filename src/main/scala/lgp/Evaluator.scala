@@ -1,12 +1,12 @@
 package lgp
 
-import lgp.Model.{Individuo, Problem}
+import lgp.Model.{Individual, Problem}
 
 trait Evaluator[SAMPLE] {
-  def evaluate(individuo: Individuo, samples: List[SAMPLE]): Double
+  def evaluate(individual: Individual, samples: List[SAMPLE]): Double
   def baseline(samples: List[SAMPLE]): Double
 
-  def prepareVariables(actions: Vector[Action], problem: Problem): (Individuo, Array[Double]) = {
+  def prepareVariables(actions: Vector[Action], problem: Problem): (Individual, Array[Double]) = {
     val constants = Array.fill(problem.inputSize)(false) ++ Array.fill(problem.memorySize)(true)
     val variables = Array.fill(problem.inputSize)(0d) ++ Array.fill(problem.memorySize)(1d)
 
@@ -26,6 +26,6 @@ trait Evaluator[SAMPLE] {
 
     val newActions = step(actions.toList, Nil)
 
-    (Individuo(newActions.toVector, problem), variables.takeRight(problem.memorySize))
+    (Individual(newActions.toVector, problem), variables.takeRight(problem.memorySize))
   }
 }

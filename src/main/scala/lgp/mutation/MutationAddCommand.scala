@@ -6,23 +6,23 @@ import lgp.{Model, Mutation}
 import scala.util.Random
 
 class MutationAddCommand(implicit problem: Problem, random: Random) extends Mutation {
-  override def mutation(individuo: Model.Individuo): Model.Individuo = {
+  override def mutation(individual: Model.Individual): Model.Individual = {
 
-    if (problem.maxCandidateSize > individuo.actions.size) {
+    if (problem.maxCandidateSize > individual.actions.size) {
       val nextAction = problem.randomAction
-      if (individuo.actions.nonEmpty) {
-        individuo.copy(
-          actions = individuo.actions.patch(
-            random.nextInt(individuo.actions.size),
+      if (individual.actions.nonEmpty) {
+        individual.copy(
+          actions = individual.actions.patch(
+            random.nextInt(individual.actions.size),
             Seq(nextAction),
             0
           )
         )
       } else {
-        individuo.copy(actions = Vector(nextAction))
+        individual.copy(actions = Vector(nextAction))
       }
     } else {
-      individuo
+      individual
     }
   }
 }

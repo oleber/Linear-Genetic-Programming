@@ -15,8 +15,8 @@ object Model {
                       numberOfSteps: Int,
                       actionGenerators: ActionGenerators
                     ) {
-    def isValid(individuo: Individuo): Boolean = {
-      val size = individuo.actions.size
+    def isValid(individual: Individual): Boolean = {
+      val size = individual.actions.size
       size >= minCandidateSize && size <= maxCandidateSize
     }
 
@@ -34,10 +34,10 @@ object Model {
       (start until start + memorySize).toVector
     }
 
-    def generateIndividuo(implicit random: Random): Individuo = {
-      val individuoSize = minCandidateSize + Random.nextInt(maxCandidateSize - minCandidateSize)
-      val actions = (1 to individuoSize).toVector.map(_ => randomAction)
-      Individuo(actions, this)
+    def generateIndividual(implicit random: Random): Individual = {
+      val individualSize = minCandidateSize + Random.nextInt(maxCandidateSize - minCandidateSize)
+      val actions = (1 to individualSize).toVector.map(_ => randomAction)
+      Individual(actions, this)
     }
 
     def actionGeneratorsInput(implicit random: Random): ActionGeneratorsInput = {
@@ -56,7 +56,7 @@ object Model {
     }
   }
 
-  case class Individuo(actions: Vector[Action], problem: Problem) {
+  case class Individual(actions: Vector[Action], problem: Problem) {
     def evaluate(registers: Array[Double]): Unit = {
       actions foreach {
         _.evaluate(registers)

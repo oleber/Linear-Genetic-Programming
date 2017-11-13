@@ -2,14 +2,14 @@ package lgp
 
 import lgp.Action._
 import lgp.Model.{ActionGenerators, Problem}
-import lgp.crossover.{CrossoverEfectiveRandom, CrossoverHomogineous, CrossoverRandom}
-import lgp.learner.{LearnerIsland, LearnerTournment}
+import lgp.crossover.{CrossoverEffectiveRandom, CrossoverHomogeneous, CrossoverRandom}
+import lgp.learner.{LearnerIsland, LearnerTournament}
 import lgp.mutation.{MutationAddCommand, MutationDeleteCommand, MutationMicro, MutationRandomPoint}
 
 import scala.util.Random
 
 object HelloApp extends App {
-  implicit val random = new Random()
+  implicit val random: Random = new Random()
 
   val inputSize = 10
 
@@ -70,8 +70,8 @@ object HelloApp extends App {
   new Engine(
     crossovers = Vector(
       new CrossoverRandom(3),
-      new CrossoverEfectiveRandom(3),
-      new CrossoverHomogineous
+      new CrossoverEffectiveRandom(3),
+      new CrossoverHomogeneous
     ),
     mutations = Vector(
       new MutationRandomPoint,
@@ -80,6 +80,6 @@ object HelloApp extends App {
       new MutationAddCommand
     ),
     evaluator = new EvaluatorRegression,
-    learner = new LearnerIsland(100, new LearnerTournment)
+    learner = new LearnerIsland(100, new LearnerTournament)
   ).learn(problem, samples, samples)
 }

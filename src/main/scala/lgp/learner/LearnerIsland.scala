@@ -7,18 +7,22 @@ import scala.util.Random
 
 class LearnerIsland[SAMPLE](groupSize: Int, learner: Learner[SAMPLE])(implicit problem: Problem, random: Random) extends Learner[SAMPLE] {
   override def learn(
-                      individuos: List[Model.Individuo],
+                      population: List[Model.Individual],
                       samples: List[SAMPLE],
                       crossovers: Vector[Crossover],
                       mutations: Vector[Mutation],
                       evaluator: Evaluator[SAMPLE]
-                    ): List[Learner.EvaluatedIndividuo] = {
+                    ): List[Learner.EvaluatedIndividual] = {
 
-    val groups = individuos
+    val groups = population
       .grouped(groupSize)
       .toList
       .par
-      .map({group => learner.learn(group, samples, crossovers,mutations, evaluator).sortBy(_.cost)})
+      .map({ subPopulation =>
+        learner
+          .learn(subPopulation, samples, crossovers, mutations, evaluator)
+          .sortBy(_.cost)
+      })
       .seq
 
     val groupsUpdates = for {
