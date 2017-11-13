@@ -1,6 +1,6 @@
 package lgp
 
-import lgp.Learner.EvaluatedIndividual
+import lgp.Evaluator.EvaluatedIndividual
 import lgp.Model.{Individual, Problem}
 
 import scala.util.Random
@@ -47,7 +47,7 @@ class Engine[SAMPLE](
             val (resulvedIndeviduo, _) = evaluator.prepareVariables(individual.efectiveActions, problem)
 
             val testCost = evaluator.evaluate(individual, test)
-            println(f"${cost / samples.size}%.2f\t${testCost / samples.size}%.2f\t${(testCost / cost - 1) * 100}%.1f%%\t${individual.actions.size}\t${individual.efectiveActions.size}\t${resulvedIndeviduo.actions.size}\t${individual.efectiveActions.reverse}")
+            println(f"${cost / samples.size}%.2f\t${testCost.cost / samples.size}%.2f\t${(testCost.cost / cost - 1) * 100}%.1f%%\t${individual.actions.size}\t${individual.efectiveActions.size}\t${resulvedIndeviduo.actions.size}\t${individual.efectiveActions.reverse}")
             individual
           })
 

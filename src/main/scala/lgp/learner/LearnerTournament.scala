@@ -1,6 +1,6 @@
 package lgp.learner
 
-import lgp.Learner.EvaluatedIndividual
+import lgp.Evaluator.EvaluatedIndividual
 import lgp.Model.{Individual, Problem}
 import lgp._
 
@@ -54,19 +54,19 @@ class LearnerTournament[SAMPLE](implicit problem: Problem, random: Random) exten
         }
       }
 
-      val sortedParticipants = participants
-        .map(individual => EvaluatedIndividual(individual, evaluator.evaluate(individual, samples)))
+      val sortedParticipants = evaluator
+        .evaluate(participants, samples)
         .sortBy(_.cost)
 
       val List(parent1, parent2) = sortedParticipants.take(2)
 
-      val simplifiedParent1 = parent1.individual.efectiveActions
-      val simplifiedParent2 = parent2.individual.efectiveActions
+      val simplifiedParents = Set(parent1, parent2)
+        .map(_.individual.efectiveActions)
 
-      val simplifiedParents = Set(simplifiedParent1, simplifiedParent2)
-
-      val newIndividuals = createNewIndividuals(parent1.individual, parent2.individual, simplifiedParents, Nil, 0)
-        .map(newIndividual => EvaluatedIndividual(newIndividual, evaluator.evaluate(newIndividual, samples)))
+      val newIndividuals = evaluator.evaluate(
+        createNewIndividuals(parent1.individual, parent2.individual, simplifiedParents, Nil, 0),
+        samples
+      )
 
       (newIndividuals ++ sortedParticipants).sortBy(_.cost).take(4)
     }

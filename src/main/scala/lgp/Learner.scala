@@ -1,11 +1,7 @@
 package lgp
 
-import lgp.Learner.EvaluatedIndividual
+import lgp.Evaluator.EvaluatedIndividual
 import lgp.Model.Individual
-
-object Learner {
-  case class EvaluatedIndividual(individual: Individual, cost: Double)
-}
 
 trait Learner[SAMPLE] {
 

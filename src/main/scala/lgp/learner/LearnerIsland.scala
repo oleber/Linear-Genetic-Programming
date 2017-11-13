@@ -1,5 +1,6 @@
 package lgp.learner
 
+import lgp.Evaluator.EvaluatedIndividual
 import lgp.Model.Problem
 import lgp._
 
@@ -12,7 +13,7 @@ class LearnerIsland[SAMPLE](groupSize: Int, learner: Learner[SAMPLE])(implicit p
                       crossovers: Vector[Crossover],
                       mutations: Vector[Mutation],
                       evaluator: Evaluator[SAMPLE]
-                    ): List[Learner.EvaluatedIndividual] = {
+                    ): List[EvaluatedIndividual] = {
 
     val groups = population
       .grouped(groupSize)
