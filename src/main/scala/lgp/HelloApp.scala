@@ -3,6 +3,7 @@ package lgp
 import lgp.Action._
 import lgp.Model.{ActionGenerators, Problem}
 import lgp.crossover.{CrossoverEffectiveRandom, CrossoverHomogeneous, CrossoverRandom}
+import lgp.evaluator.EvaluatorRegression
 import lgp.learner.{LearnerIsland, LearnerTournament}
 import lgp.mutation.{MutationAddCommand, MutationDeleteCommand, MutationMicro, MutationRandomPoint}
 

@@ -1,7 +1,8 @@
-package lgp
+package lgp.evaluator
 
 import lgp.Evaluator.EvaluatedIndividual
 import lgp.Model.{Individual, Problem}
+import lgp.{Evaluator, SampleRegression}
 
 import scala.util.Random
 
@@ -17,7 +18,7 @@ class EvaluatorRegression(implicit problem: Problem, random: Random) extends Eva
 
       val error = result - registers(problem.inputSize)
 
-      Math.pow(error, 2)
+      error * error
     }
 
     val sizeFactor = 1 + 0.00001 * individual.efectiveActions.size.toFloat / problem.maxCandidateSize.toFloat
@@ -27,6 +28,12 @@ class EvaluatorRegression(implicit problem: Problem, random: Random) extends Eva
 
   override def baseline(samples: List[SampleRegression]): Double = {
     val mean = samples.map(_.expected).sum / samples.size
-    samples.map(sample => Math.pow(sample.expected-mean, 2)).sum / samples.size
+    val totalSquareError = samples
+      .map(sample => {
+        val error = sample.expected - mean
+        error * error
+      })
+      .sum
+    totalSquareError / samples.size
   }
 }
