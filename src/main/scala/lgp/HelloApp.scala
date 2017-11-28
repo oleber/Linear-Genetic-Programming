@@ -5,7 +5,7 @@ import lgp.Model.{ActionGenerators, Problem}
 import lgp.crossover.{CrossoverEffectiveRandom, CrossoverHomogeneous, CrossoverRandom}
 import lgp.evaluator.EvaluatorRegression
 import lgp.learner.{LearnerIsland, LearnerTournament}
-import lgp.mutation.{MutationAddCommand, MutationDeleteCommand, MutationMicro, MutationRandomPoint}
+import lgp.mutation._
 
 import scala.util.Random
 
@@ -78,7 +78,8 @@ object HelloApp extends App {
       new MutationRandomPoint,
       new MutationDeleteCommand,
       new MutationMicro,
-      new MutationAddCommand
+      new MutationAddCommand,
+      new MutationEffective
     ),
     evaluator = new EvaluatorRegression,
     learner = new LearnerIsland(100, new LearnerTournament)
