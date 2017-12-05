@@ -8,15 +8,14 @@ import scala.util.Random
 
 class EvaluatorRegression(implicit problem: Problem, random: Random) extends Evaluator[SampleRegression] {
   override def evaluate(individual: Individual, samples: List[SampleRegression]): EvaluatedIndividual = {
-    val (resolvedIndividual, variables) = prepareVariables(individual.efectiveActions, problem)
+    val input = Array.ofDim[Double](problem.memorySize)
 
-    val costs = for {
-      SampleRegression(parameters, result) <- samples
-    } yield {
-      val registers = parameters ++ variables
-      resolvedIndividual.evaluate(registers)
+    val costs = samples map { case SampleRegression(parameters, result) =>
+      Array.copy(parameters, 0, input, 0, problem.memorySize)
 
-      val error = result - registers(problem.inputSize)
+      individual.evaluate(input)
+
+      val error = result - input(problem.outputIndexes(0))
 
       error * error
     }

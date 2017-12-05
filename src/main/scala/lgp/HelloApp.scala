@@ -16,10 +16,7 @@ object HelloApp extends App {
 
   def problemBuider = Problem(
     outputSize = 1,
-    constantsSize = 10,
-    inputSize = inputSize,
-    //    memorySize = 16,
-    memorySize = 30,
+    memorySize = 40,
     minCandidateSize = 1,
     maxCandidateSize = 100,
     numberOfCandidates = 1000,
@@ -66,6 +63,19 @@ object HelloApp extends App {
 //  def samples = for {_ <- (1 to 250).toList} yield sampleSimple
   def samples = for {_ <- (1 to 1000).toList} yield sampleComplex
 
+  def resizedSamples = {
+    def buildRegisters(parameters: Array[Double], collected: Array[Double]): Array[Double] = {
+      if (collected.length > problem.memorySize)
+        collected.take(problem.memorySize)
+      else
+        buildRegisters(parameters, collected ++ parameters)
+    }
+
+    samples map { case SampleRegression(parameters, toGuess) =>
+      SampleRegression(buildRegisters(parameters, Array.ofDim[Double](0)), toGuess)
+    }
+  }
+
   implicit val problem: Problem = problemBuider
 
   new Engine(
@@ -83,5 +93,5 @@ object HelloApp extends App {
     ),
     evaluator = new EvaluatorRegression,
     learner = new LearnerIsland(100, new LearnerTournament)
-  ).learn(problem, samples, samples)
+  ).learn(problem, resizedSamples, resizedSamples)
 }

@@ -6,8 +6,6 @@ object Model {
 
   case class Problem(
                       outputSize: Int,
-                      constantsSize: Int,
-                      inputSize: Int,
                       memorySize: Int,
                       minCandidateSize: Int,
                       maxCandidateSize: Int,
@@ -20,19 +18,8 @@ object Model {
       size >= minCandidateSize && size <= maxCandidateSize
     }
 
-    val outputIndexes: Vector[Int] = Vector(inputSize)
+    val outputIndexes: Vector[Int] = (0 until outputSize).toVector
 
-    val constantsIndexes: Vector[Int] = (outputSize until outputSize + constantsSize).toVector
-
-    val inputIndexes: Vector[Int] = {
-      val start = outputSize + constantsSize
-      (start until start + inputSize).toVector
-    }
-
-    val memoryIndexes: Vector[Int] = {
-      val start = outputSize + constantsSize + inputSize
-      (start until start + memorySize).toVector
-    }
 
     def generateIndividual(implicit random: Random): Individual = {
       val individualSize = minCandidateSize + Random.nextInt(maxCandidateSize - minCandidateSize)
@@ -42,8 +29,8 @@ object Model {
 
     def actionGeneratorsInput(implicit random: Random): ActionGeneratorsInput = {
       ActionGeneratorsInput(
-        to = () => random.nextInt(memorySize) + inputSize,
-        nextParam = () => random.nextInt(memorySize + inputSize),
+        to = () => random.nextInt(memorySize),
+        nextParam = () => random.nextInt(memorySize),
         action = () => randomAction,
         minValue = -10,
         maxValue = 10
@@ -58,7 +45,7 @@ object Model {
 
   case class Individual(actions: Vector[Action], problem: Problem) {
     def evaluate(registers: Array[Double]): Unit = {
-      actions foreach {
+      efectiveActions foreach {
         _.evaluate(registers)
       }
     }
