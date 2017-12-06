@@ -29,6 +29,8 @@ object Action {
     override def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action = {
       PI(actionGeneratorsInput.to())
     }
+
+    override def toString: String = s"r$to = PI"
   }
 
   case class E(to: Int) extends Action0(to: Int) {
@@ -37,6 +39,8 @@ object Action {
     override def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action = {
       E(actionGeneratorsInput.to())
     }
+
+    override def toString: String = s"r$to = E"
   }
 
   case class `V+2`(to: Int) extends Action0(to: Int) {
@@ -45,6 +49,8 @@ object Action {
     override def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action = {
       `V+2`(actionGeneratorsInput.to())
     }
+
+    override def toString: String = s"r$to = 2"
   }
 
   case class `V+1`(to: Int) extends Action0(to: Int) {
@@ -52,6 +58,8 @@ object Action {
     override def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action = {
       `V+1`(actionGeneratorsInput.to())
     }
+
+    override def toString: String = s"r$to = 1"
   }
 
   case class V0(to: Int) extends Action0(to: Int) {
@@ -59,6 +67,8 @@ object Action {
     override def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action = {
       `V0`(actionGeneratorsInput.to())
     }
+
+    override def toString: String = s"r$to = 0"
   }
 
   case class `V-1`(to: Int) extends Action0(to: Int) {
@@ -66,6 +76,8 @@ object Action {
     override def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action = {
       `V-1`(actionGeneratorsInput.to())
     }
+
+    override def toString: String = s"r$to = -1"
   }
 
   case class `V-2`(to: Int) extends Action0(to: Int) {
@@ -73,6 +85,8 @@ object Action {
     override def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action = {
       `V-2`(actionGeneratorsInput.to())
     }
+
+    override def toString: String = s"r$to = -2"
   }
 
   object Constant {
@@ -86,6 +100,8 @@ object Action {
     override def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action = {
       Constant(actionGeneratorsInput.to(), value)
     }
+
+    override def toString: String = s"r$to = $value"
   }
 
   /////////////////////
@@ -105,6 +121,8 @@ object Action {
         case 1 => Cos(to, actionGeneratorsInput.nextParam())
       }
     }
+
+    override def toString: String = s"r$to = cos(r$i1)"
   }
 
   case class Sin(to: Int, i1: Int) extends Action1(to: Int, i1: Int) {
@@ -116,6 +134,8 @@ object Action {
         case 1 => Sin(to, actionGeneratorsInput.nextParam())
       }
     }
+
+    override def toString: String = s"r$to = sin(r$i1)"
   }
 
   case class Sqrt(to: Int, i1: Int) extends Action1(to: Int, i1: Int) {
@@ -131,6 +151,8 @@ object Action {
         case 1 => Sqrt(to, actionGeneratorsInput.nextParam())
       }
     }
+
+    override def toString: String = s"r$to = sqrt(r$i1)"
   }
 
   case class Log(to: Int, i1: Int) extends Action1(to: Int, i1: Int) {
@@ -146,6 +168,9 @@ object Action {
         case 1 => Log(to, actionGeneratorsInput.nextParam())
       }
     }
+
+    override def toString: String = s"r$to = log(r$i1)"
+
   }
 
   /////////////////////
@@ -168,6 +193,8 @@ object Action {
         case 2 => Addition(to, i1, actionGeneratorsInput.nextParam())
       }
     }
+
+    override def toString: String = s"r$to = r$i1 + r$i2"
   }
 
   case class Subtraction(to: Int, i1: Int, i2: Int) extends Action2(to, i1: Int, i2: Int) {
@@ -181,6 +208,8 @@ object Action {
         case 2 => Subtraction(to, i1, actionGeneratorsInput.nextParam())
       }
     }
+
+    override def toString: String = s"r$to = r$i1 - r$i2"
   }
 
   case class Multiplication(to: Int, i1: Int, i2: Int) extends Action2(to, i1: Int, i2: Int) {
@@ -195,6 +224,8 @@ object Action {
         case 2 => Multiplication(to, i1, actionGeneratorsInput.nextParam())
       }
     }
+
+    override def toString: String = s"r$to = r$i1 * r$i2"
   }
 
   case class Division(to: Int, i1: Int, i2: Int) extends Action2(to, i1: Int, i2: Int) {
@@ -210,6 +241,8 @@ object Action {
         case 2 => Division(to, i1, actionGeneratorsInput.nextParam())
       }
     }
+
+    override def toString: String = s"r$to = r$i1 / r$i2"
   }
 
   case class IfBigger(i1: Int, i2: Int, action: Action) extends Action {
@@ -231,6 +264,8 @@ object Action {
         case 3 => action
       }
     }
+
+    override def toString: String = s"if r$i1 > r$i2 then $action"
   }
 
 }
