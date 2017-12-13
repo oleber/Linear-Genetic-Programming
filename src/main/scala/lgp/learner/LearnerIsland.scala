@@ -11,7 +11,6 @@ class LearnerIsland[SAMPLE](groupSize: Int, learner: Learner[SAMPLE])(implicit p
                       population: List[Model.Individual],
                       samples: List[SAMPLE],
                       crossovers: Vector[Crossover],
-                      mutations: Vector[Mutation],
                       evaluator: Evaluator[SAMPLE]
                     ): List[EvaluatedIndividual] = {
 
@@ -21,7 +20,7 @@ class LearnerIsland[SAMPLE](groupSize: Int, learner: Learner[SAMPLE])(implicit p
       .par
       .map({ subPopulation =>
         learner
-          .learn(subPopulation, samples, crossovers, mutations, evaluator)
+          .learn(subPopulation, samples, crossovers, evaluator)
           .sortBy(_.cost)
       })
       .seq

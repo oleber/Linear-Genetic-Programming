@@ -1,9 +1,18 @@
 package lgp
 
+import lgp.Engine.MutationToCrossover
 import lgp.Evaluator.EvaluatedIndividual
 import lgp.Model.{Individual, Problem}
 
 import scala.util.Random
+
+object Engine {
+  case class MutationToCrossover(mutation: Mutation) extends Crossover {
+    override def crossover(individual1: Individual, individual2: Individual): Individual = {
+      mutation.mutation(individual1)
+    }
+  }
+}
 
 class Engine[SAMPLE](
                       crossovers: Vector[Crossover],
@@ -12,6 +21,8 @@ class Engine[SAMPLE](
                       learner: Learner[SAMPLE]
                     ) {
   val startTime: Long = System.currentTimeMillis()
+
+  val allChanges: Vector[Crossover] = crossovers ++ mutations.map(MutationToCrossover.apply)
 
   def learn(
              problem: Problem,
@@ -27,8 +38,7 @@ class Engine[SAMPLE](
         val newEvaluatedPopulation = learner.learn(
           population = population,
           samples = samples,
-          crossovers = crossovers,
-          mutations = mutations,
+          crossovers = allChanges,
           evaluator = evaluator
         )
 
