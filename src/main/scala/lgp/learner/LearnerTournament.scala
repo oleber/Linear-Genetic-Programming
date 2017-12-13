@@ -21,7 +21,7 @@ class LearnerTournament[SAMPLE](implicit problem: Problem, random: Random) exten
                    samples: List[SAMPLE]
                  )(implicit random: Random): List[EvaluatedIndividual] = {
 
-      def creatNewIndividual(parent1: Individual, parent2: Individual): Individual = {
+      def createNewIndividual(parent1: Individual, parent2: Individual): Individual = {
         val (p1, p2) = if (random.nextInt(2) == 0) (parent1, parent2) else (parent2, parent1)
         val crossoverParticipant = crossovers(random.nextInt(crossovers.size)).crossover(p1, p2)
         mutations(random.nextInt(mutations.size)).mutation(crossoverParticipant)
@@ -40,9 +40,9 @@ class LearnerTournament[SAMPLE](implicit problem: Problem, random: Random) exten
         } else if (iteration > 10) {
           children
         } else {
-          val newIndividual = creatNewIndividual(parent1, parent2)
+          val newIndividual = createNewIndividual(parent1, parent2)
 
-          val newChildren = if (simplifiedParents.contains(newIndividual.efectiveActions)) {
+          val newChildren = if (simplifiedParents.contains(newIndividual.effectiveActions)) {
             children
           } else if (!problem.isValid(newIndividual)) {
             children
@@ -61,7 +61,7 @@ class LearnerTournament[SAMPLE](implicit problem: Problem, random: Random) exten
       val List(parent1, parent2) = sortedParticipants.take(2)
 
       val simplifiedParents = Set(parent1, parent2)
-        .map(_.individual.efectiveActions)
+        .map(_.individual.effectiveActions.toVector)
 
       val newIndividuals = evaluator.evaluate(
         createNewIndividuals(parent1.individual, parent2.individual, simplifiedParents, Nil, 0),

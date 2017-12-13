@@ -20,7 +20,7 @@ class EvaluatorRegression(implicit problem: Problem, random: Random) extends Eva
       error * error
     }
 
-    val sizeFactor = 1 + 0.00001 * individual.efectiveActions.size.toFloat / problem.maxCandidateSize.toFloat
+    val sizeFactor = 1 + 0.00001 * individual.effectiveActions.size.toFloat / problem.maxCandidateSize.toFloat
 
     EvaluatedIndividual(individual, costs.sum * sizeFactor)
   }

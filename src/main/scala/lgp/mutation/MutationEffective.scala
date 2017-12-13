@@ -6,9 +6,9 @@ import lgp.{Action, Model, Mutation}
 import scala.util.Random
 
 class MutationEffective(implicit problem: Problem, random: Random) extends Mutation {
-  override def mutation(individual: Model.Individual) = {
+  override def mutation(individual: Model.Individual): Model.Individual = {
     val effectiveRegisters: Set[Int] = (
-      individual.efectiveActions.flatMap(_.assignFrom) ++ problem.outputIndexes
+      individual.effectiveActions.flatMap(_.assignFrom) ++ problem.outputIndexes
       ).toSet
 
     @scala.annotation.tailrec

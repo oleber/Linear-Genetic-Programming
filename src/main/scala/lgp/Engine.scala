@@ -18,7 +18,6 @@ class Engine[SAMPLE](
              samples: List[SAMPLE],
              test: List[SAMPLE]
            )(implicit random: Random): List[Individual] = {
-
     @scala.annotation.tailrec
     def step(missingSteps: Int, population: List[Individual]): List[Individual] = {
 
@@ -46,7 +45,8 @@ class Engine[SAMPLE](
           .take(informTop)
           .foreach({ case EvaluatedIndividual(individual, cost) =>
             val testCost = evaluator.evaluate(individual, test)
-            println(f"${cost / samples.size}%.2f\t${testCost.cost / samples.size}%.2f\t${(testCost.cost / cost - 1) * 100}%.1f%%\t${individual.actions.size}\t${individual.efectiveActions.size}\t${individual.efectiveActions.reverse}")
+
+            println(f"${cost / samples.size}%.2f\t${testCost.cost / samples.size}%.2f\t${(testCost.cost / cost - 1) * 100}%.1f%%\t${individual.actions.size}\t${individual.effectiveActions.size}\t${individual.effectiveActions.reverse}")
             individual
           })
 

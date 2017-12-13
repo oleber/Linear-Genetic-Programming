@@ -44,13 +44,16 @@ object Model {
   }
 
   case class Individual(actions: Vector[Action], problem: Problem) {
-    def evaluate(registers: Array[Double]): Unit = {
-      efectiveActions foreach {
-        _.evaluate(registers)
+    // the code is ugly but improves performance by ~30%
+    @inline def evaluate(registers: Array[Double]): Unit = {
+      var i = 0
+      while (effectiveActionsArray.length > i) {
+        effectiveActionsArray(i).evaluate(registers)
+        i = i +1
       }
     }
 
-    val efectiveActions: Vector[Action] = {
+    val effectiveActions: Vector[Action] = {
       def step(program: List[Action], effectiveVariable: Set[Int]): List[Action] = {
         program match {
           case head :: tail if effectiveVariable.contains(head.assignTo) =>
@@ -68,6 +71,8 @@ object Model {
         problem.outputIndexes.toSet
       ).reverse.toVector
     }
+
+    val effectiveActionsArray: Array[Action] = effectiveActions.toArray
   }
 
   case class ActionGeneratorsInput(
