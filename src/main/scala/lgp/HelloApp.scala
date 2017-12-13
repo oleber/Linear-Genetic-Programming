@@ -78,6 +78,8 @@ object HelloApp extends App {
 
   implicit val problem: Problem = problemBuider
 
+  val startTimeMillis = System.currentTimeMillis()
+
   new Engine(
     crossovers = Vector(
       new CrossoverRandom(3),
@@ -94,4 +96,7 @@ object HelloApp extends App {
     evaluator = new EvaluatorRegression,
     learner = new LearnerIsland(100, new LearnerTournament)
   ).learn(problem, resizedSamples, resizedSamples)
+
+  println("-----------------------------------------------------------------------------")
+  println(s"${(System.currentTimeMillis() - startTimeMillis)/1000} sec")
 }

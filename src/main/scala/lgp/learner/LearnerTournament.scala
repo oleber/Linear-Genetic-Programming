@@ -7,9 +7,6 @@ import lgp._
 import scala.util.Random
 
 class LearnerTournament[SAMPLE](implicit problem: Problem, random: Random) extends Learner[SAMPLE] {
-
-
-
   override def learn(
                       population: List[Model.Individual],
                       samples: List[SAMPLE],
@@ -57,29 +54,30 @@ class LearnerTournament[SAMPLE](implicit problem: Problem, random: Random) exten
         }
       }
 
-      val sortedParticipants = evaluator
-        .evaluate(participants, samples)
-        .sortBy(_.cost)
+      if (participants.size != 4) {
+        evaluator.evaluate(participants, samples)
+      } else {
+        val sortedParticipants = evaluator
+          .evaluate(participants, samples)
+          .sortBy(_.cost)
 
-      val List(parent1, parent2) = sortedParticipants.take(2)
+        val List(parent1, parent2) = sortedParticipants.take(2)
 
-      val simplifiedParents = Set(parent1, parent2)
-        .map(_.individual.effectiveActions.toVector)
+        val simplifiedParents = Set(parent1, parent2)
+          .map(_.individual.effectiveActions.toVector)
 
-      val newIndividuals = evaluator.evaluate(
-        createNewIndividuals(parent1.individual, parent2.individual, simplifiedParents, Nil, 0),
-        samples
-      )
+        val newIndividuals = evaluator.evaluate(
+          createNewIndividuals(parent1.individual, parent2.individual, simplifiedParents, Nil, 0),
+          samples
+        )
 
-      (newIndividuals ++ sortedParticipants).sortBy(_.cost).take(4)
+        (newIndividuals ++ sortedParticipants).sortBy(_.cost).take(4)
+      }
     }
 
     random.shuffle(population)
       .grouped(4)
-      .toList
-      .par
       .flatMap(participants => tournament(participants, samples))
-      .seq
       .toList
   }
 }
