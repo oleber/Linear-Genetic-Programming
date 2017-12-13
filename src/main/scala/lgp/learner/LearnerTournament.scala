@@ -8,6 +8,8 @@ import scala.util.Random
 
 class LearnerTournament[SAMPLE](implicit problem: Problem, random: Random) extends Learner[SAMPLE] {
 
+
+
   override def learn(
                       population: List[Model.Individual],
                       samples: List[SAMPLE],
@@ -16,6 +18,8 @@ class LearnerTournament[SAMPLE](implicit problem: Problem, random: Random) exten
                       evaluator: Evaluator[SAMPLE]
                     ): List[EvaluatedIndividual] = {
 
+    val allChanges = crossovers ++ mutations.map(MutationToCrossover.apply)
+
     def tournament(
                    participants: List[Individual],
                    samples: List[SAMPLE]
@@ -23,8 +27,7 @@ class LearnerTournament[SAMPLE](implicit problem: Problem, random: Random) exten
 
       def createNewIndividual(parent1: Individual, parent2: Individual): Individual = {
         val (p1, p2) = if (random.nextInt(2) == 0) (parent1, parent2) else (parent2, parent1)
-        val crossoverParticipant = crossovers(random.nextInt(crossovers.size)).crossover(p1, p2)
-        mutations(random.nextInt(mutations.size)).mutation(crossoverParticipant)
+        allChanges(random.nextInt(allChanges.size)).crossover(p1, p2)
       }
 
       @scala.annotation.tailrec
