@@ -2,20 +2,29 @@ package lgp.evaluator
 
 import lgp.Evaluator.EvaluatedIndividual
 import lgp.Model.{Individual, Problem}
+import lgp.SampleRegression.SampleRegressionList
 import lgp.{Evaluator, SampleRegression}
 
 import scala.util.Random
 
-class EvaluatorRegression(implicit problem: Problem, random: Random) extends Evaluator[SampleRegression] {
-  override def evaluate(individual: Individual, samples: List[SampleRegression]): EvaluatedIndividual = {
-    val input = Array.ofDim[Double](problem.memorySize)
+class EvaluatorRegression(implicit problem: Problem, random: Random)
+  extends Evaluator[SampleRegressionList, Array[Double]] {
 
-    val costs = samples map { case SampleRegression(parameters, result) =>
-      Array.copy(parameters, 0, input, 0, problem.memorySize)
+  override def createBuffer(samples: SampleRegressionList) = {
+    Array.ofDim[Double](problem.memorySize)
+  }
 
-      individual.evaluate(input)
+  override def evaluateSingle(
+                         individual: Individual,
+                         samples: SampleRegressionList,
+                         buffer: Array[Double]
+                       ): EvaluatedIndividual = {
+    val costs = samples.list map { case SampleRegression(parameters, result) =>
+      Array.copy(parameters, 0, buffer, 0, problem.memorySize)
 
-      val error = result - input(problem.outputIndexes(0))
+      individual.evaluate(buffer)
+
+      val error = result - buffer(problem.outputIndexes(0))
 
       error * error
     }
@@ -25,9 +34,9 @@ class EvaluatorRegression(implicit problem: Problem, random: Random) extends Eva
     EvaluatedIndividual(individual, costs.sum * sizeFactor)
   }
 
-  override def baseline(samples: List[SampleRegression]): Double = {
-    val mean = samples.map(_.expected).sum / samples.size
-    val totalSquareError = samples
+  override def baseline(samples: SampleRegressionList): Double = {
+    val mean = samples.list.map(_.expected).sum / samples.size
+    val totalSquareError = samples.list
       .map(sample => {
         val error = sample.expected - mean
         error * error

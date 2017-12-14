@@ -44,12 +44,20 @@ object Model {
   }
 
   case class Individual(actions: Vector[Action], problem: Problem) {
+    def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
+      var i = 0
+      while (effectiveActionsArray.length > i) {
+        effectiveActionsArray(i).evaluateSIMD(buffer)
+        i = i + 1
+      }
+    }
+
     // the code is ugly but improves performance by ~30%
     @inline def evaluate(registers: Array[Double]): Unit = {
       var i = 0
       while (effectiveActionsArray.length > i) {
         effectiveActionsArray(i).evaluate(registers)
-        i = i +1
+        i = i + 1
       }
     }
 

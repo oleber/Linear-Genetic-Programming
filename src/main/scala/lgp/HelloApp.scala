@@ -2,8 +2,9 @@ package lgp
 
 import lgp.Action._
 import lgp.Model.{ActionGenerators, Problem}
+import lgp.SampleRegression.SampleRegressionList
 import lgp.crossover.{CrossoverEffectiveRandom, CrossoverHomogeneous, CrossoverRandom}
-import lgp.evaluator.EvaluatorRegression
+import lgp.evaluator.{EvaluatorRegression, EvaluatorRegressionSIMD}
 import lgp.learner.{LearnerIsland, LearnerTournament}
 import lgp.mutation._
 
@@ -63,7 +64,7 @@ object HelloApp extends App {
 //  def samples = for {_ <- (1 to 250).toList} yield sampleSimple
   def samples = for {_ <- (1 to 1000).toList} yield sampleComplex
 
-  def resizedSamples = {
+  def resizedSamples() = {
     def buildRegisters(parameters: Array[Double], collected: Array[Double]): Array[Double] = {
       if (collected.length > problem.memorySize)
         collected.take(problem.memorySize)
@@ -80,22 +81,49 @@ object HelloApp extends App {
 
   val startTimeMillis = System.currentTimeMillis()
 
-  new Engine(
-    crossovers = Vector(
-      new CrossoverRandom(3),
-      new CrossoverEffectiveRandom(3),
-      new CrossoverHomogeneous
-    ),
-    mutations = Vector(
-      new MutationRandomPoint,
-      new MutationDeleteCommand,
-      new MutationMicro,
-      new MutationAddCommand,
-      new MutationEffective
-    ),
-    evaluator = new EvaluatorRegression,
-    learner = new LearnerIsland(100, new LearnerTournament)
-  ).learn(problem, resizedSamples, resizedSamples)
+  if (false) {
+
+    new Engine(
+      crossovers = Vector(
+        new CrossoverRandom(3),
+        new CrossoverEffectiveRandom(3),
+        new CrossoverHomogeneous
+      ),
+      mutations = Vector(
+        new MutationRandomPoint,
+        new MutationDeleteCommand,
+        new MutationMicro,
+        new MutationAddCommand,
+        new MutationEffective
+      ),
+      evaluator = new EvaluatorRegressionSIMD,
+      learner = new LearnerIsland(100, new LearnerTournament)
+    ).learn(
+      problem,
+      SampleRegressionSIMD(resizedSamples().toArray),
+      SampleRegressionSIMD(resizedSamples().toArray)
+    )
+
+  } else {
+
+    new Engine(
+      crossovers = Vector(
+        new CrossoverRandom(3),
+        new CrossoverEffectiveRandom(3),
+        new CrossoverHomogeneous
+      ),
+      mutations = Vector(
+        new MutationRandomPoint,
+        new MutationDeleteCommand,
+        new MutationMicro,
+        new MutationAddCommand,
+        new MutationEffective
+      ),
+      evaluator = new EvaluatorRegression,
+      learner = new LearnerIsland(100, new LearnerTournament)
+    ).learn(problem, SampleRegressionList(resizedSamples()), SampleRegressionList(resizedSamples()))
+
+  }
 
   println("-----------------------------------------------------------------------------")
   println(s"${(System.currentTimeMillis() - startTimeMillis)/1000} sec")

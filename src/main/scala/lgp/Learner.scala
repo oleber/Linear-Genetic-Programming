@@ -5,7 +5,7 @@ import lgp.Model.{Individual, Problem}
 
 import scala.util.Random
 
-trait Learner[SAMPLE] {
+trait Learner[SAMPLE, BUFFER] {
 
   @scala.annotation.tailrec
   final def createNewIndividuals(
@@ -19,15 +19,15 @@ trait Learner[SAMPLE] {
     def createNewIndividual(parent1: Individual, parent2: Individual, crossovers: Vector[Crossover])
                            (implicit problem: Problem, random: Random): Individual = {
       val crossover = crossovers(random.nextInt(crossovers.size))
-      if (random.nextInt(2) == 0)
+      val newIndividual = if (random.nextInt(2) == 0)
         crossover.crossover(parent1, parent2)
       else
         crossover.crossover(parent2, parent1)
+
+      newIndividual
     }
 
-    if (children.length == 2) {
-      children
-    } else if (iteration > 10) {
+    if (children.length == 2 || iteration > 10) {
       children
     } else {
       val newIndividual = createNewIndividual(parent1, parent2, crossovers)
@@ -46,8 +46,8 @@ trait Learner[SAMPLE] {
 
   def learn(
              population: List[Individual],
-             samples: List[SAMPLE],
+             samples: SAMPLE,
              crossovers: Vector[Crossover],
-             evaluator: Evaluator[SAMPLE]
+             evaluator: Evaluator[SAMPLE, BUFFER]
            ): (List[EvaluatedIndividual])
 }

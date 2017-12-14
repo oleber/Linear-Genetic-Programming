@@ -12,6 +12,8 @@ trait Action {
 
   def evaluate(values: Array[Double]): Unit
 
+  def evaluateSIMD(buffer: Array[Array[Double]]): Unit
+
   def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action
 }
 
@@ -24,7 +26,16 @@ object Action {
   }
 
   case class PI(to: Int) extends Action0(to: Int) {
-    override def evaluate(values: Array[Double]): Unit = values(to) = Math.PI.toFloat
+    override def evaluate(values: Array[Double]): Unit = values(to) = Math.PI
+
+    override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
+      val result = buffer(to)
+      var i = 0
+      while (i < result.size) {
+        result(i) = Math.PI
+        i = i + 1
+      }
+    }
 
     override def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action = {
       PI(actionGeneratorsInput.to())
@@ -36,6 +47,15 @@ object Action {
   case class E(to: Int) extends Action0(to: Int) {
     override def evaluate(values: Array[Double]): Unit = values(to) = Math.E.toFloat
 
+    override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
+      val result = buffer(to)
+      var i = 0
+      while (i < result.size) {
+        result(i) = Math.E
+        i = i + 1
+      }
+    }
+
     override def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action = {
       E(actionGeneratorsInput.to())
     }
@@ -46,6 +66,16 @@ object Action {
   case class `V+2`(to: Int) extends Action0(to: Int) {
     override def evaluate(values: Array[Double]): Unit = values(to) = 2
 
+    override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
+      val result = buffer(to)
+      var i = 0
+      while (i < result.size) {
+        result(i) = 2
+        i = i + 1
+      }
+    }
+
+
     override def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action = {
       `V+2`(actionGeneratorsInput.to())
     }
@@ -55,6 +85,16 @@ object Action {
 
   case class `V+1`(to: Int) extends Action0(to: Int) {
     override def evaluate(values: Array[Double]): Unit = values(to) = 1
+
+    override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
+      val result = buffer(to)
+      var i = 0
+      while (i < result.size) {
+        result(i) = 1
+        i = i + 1
+      }
+    }
+
     override def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action = {
       `V+1`(actionGeneratorsInput.to())
     }
@@ -64,6 +104,16 @@ object Action {
 
   case class V0(to: Int) extends Action0(to: Int) {
     override def evaluate(values: Array[Double]): Unit = values(to) = 0
+
+    override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
+      val result = buffer(to)
+      var i = 0
+      while (i < result.size) {
+        result(i) = 0
+        i = i + 1
+      }
+    }
+
     override def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action = {
       `V0`(actionGeneratorsInput.to())
     }
@@ -73,6 +123,16 @@ object Action {
 
   case class `V-1`(to: Int) extends Action0(to: Int) {
     override def evaluate(values: Array[Double]): Unit = values(to) = -1
+
+    override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
+      val result = buffer(to)
+      var i = 0
+      while (i < result.size) {
+        result(i) = -1
+        i = i + 1
+      }
+    }
+
     override def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action = {
       `V-1`(actionGeneratorsInput.to())
     }
@@ -82,6 +142,16 @@ object Action {
 
   case class `V-2`(to: Int) extends Action0(to: Int) {
     override def evaluate(values: Array[Double]): Unit = values(to) = -2
+
+    override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
+      val result = buffer(to)
+      var i = 0
+      while (i < result.size) {
+        result(i) = -2
+        i = i + 1
+      }
+    }
+
     override def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action = {
       `V-2`(actionGeneratorsInput.to())
     }
@@ -97,6 +167,16 @@ object Action {
 
   case class Constant(to: Int, value: Double = Random.nextDouble()) extends Action0(to: Int) {
     override def evaluate(values: Array[Double]): Unit = values(to) = value
+
+    override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
+      val result = buffer(to)
+      var i = 0
+      while (i < result.size) {
+        result(i) = value
+        i = i + 1
+      }
+    }
+
     override def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action = {
       Constant(actionGeneratorsInput.to(), value)
     }
@@ -115,6 +195,17 @@ object Action {
   case class Cos(to: Int, i1: Int) extends Action1(to: Int, i1: Int) {
     override def evaluate(values: Array[Double]): Unit = values(to) = Math.cos(values(i1)).toFloat
 
+    override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
+      val result = buffer(to)
+      val source1 = buffer(i1)
+
+      var i = 0
+      while (i < result.size) {
+        result(i) = Math.cos(source1(i))
+        i = i + 1
+      }
+    }
+
     override def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action = {
       Random.nextInt(2) match {
         case 0 => Cos(actionGeneratorsInput.to(), i1)
@@ -127,6 +218,17 @@ object Action {
 
   case class Sin(to: Int, i1: Int) extends Action1(to: Int, i1: Int) {
     override def evaluate(values: Array[Double]): Unit = values(to) = Math.sin(values(i1)).toFloat
+
+    override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
+      val result = buffer(to)
+      val source1 = buffer(i1)
+
+      var i = 0
+      while (i < result.size) {
+        result(i) = Math.sin(source1(i))
+        i = i + 1
+      }
+    }
 
     override def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action = {
       Random.nextInt(2) match {
@@ -145,6 +247,21 @@ object Action {
       if (newValue.isNaN || newValue.isInfinity) 1000000 else newValue.toFloat
     }
 
+    override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
+      val result = buffer(to)
+      val source1 = buffer(i1)
+
+      var i = 0
+      while (i < result.size) {
+        result(i) = {
+          val value = source1(i1)
+          val newValue = if (value > 0) Math.sqrt(value) else -Math.sqrt(-value)
+          if (newValue.isNaN || newValue.isInfinity) 1000000 else newValue.toFloat
+        }
+        i = i + 1
+      }
+    }
+
     override def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action = {
       Random.nextInt(2) match {
         case 0 => Sqrt(actionGeneratorsInput.to(), i1)
@@ -160,6 +277,21 @@ object Action {
       val value = values(i1)
       val newValue = if (value > 0) Math.log(value) else -Math.log(-value)
       if (newValue.isNaN || newValue.isInfinity) 1000000 else newValue.toFloat
+    }
+
+    override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
+      val result = buffer(to)
+      val source1 = buffer(i1)
+
+      var i = 0
+      while (i < result.size) {
+        result(i) = {
+          val value = source1(i1)
+          val newValue = if (value > 0) Math.log(value) else -Math.log(-value)
+          if (newValue.isNaN || newValue.isInfinity) 1000000 else newValue.toFloat
+        }
+        i = i + 1
+      }
     }
 
     override def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action = {
@@ -186,6 +318,18 @@ object Action {
       values(to) = values(i1) + values(i2)
     }
 
+    override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
+      val result = buffer(to)
+      val source1 = buffer(i1)
+      val source2 = buffer(i2)
+
+      var i = 0
+      while (i < result.size) {
+        result(i) = source1(i) + source2(i)
+        i = i + 1
+      }
+    }
+
     override def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action = {
       Random.nextInt(3) match {
         case 0 => Addition(actionGeneratorsInput.to(), i1, i2)
@@ -201,6 +345,19 @@ object Action {
     override def evaluate(values: Array[Double]): Unit = {
       values(to) = values(i1) - values(i2)
     }
+
+    override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
+      val result = buffer(to)
+      val source1 = buffer(i1)
+      val source2 = buffer(i2)
+
+      var i = 0
+      while (i < result.size) {
+        result(i) = source1(i) - source2(i)
+        i = i + 1
+      }
+    }
+
     override def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action = {
       Random.nextInt(3) match {
         case 0 => Subtraction(actionGeneratorsInput.to(), i1, i2)
@@ -217,6 +374,19 @@ object Action {
       values(to) = values(i1) * values(i2)
     }
 
+    override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
+      val result = buffer(to)
+      val source1 = buffer(i1)
+      val source2 = buffer(i2)
+
+      var i = 0
+      while (i < result.size) {
+        result(i) = source1(i) * source2(i)
+        i = i + 1
+      }
+    }
+
+
     override def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action = {
       Random.nextInt(3) match {
         case 0 => Multiplication(actionGeneratorsInput.to(), i1, i2)
@@ -232,6 +402,21 @@ object Action {
     override def evaluate(values: Array[Double]): Unit = values(to) = {
       val newValue = values(i1) / values(i2)
       if (newValue.isNaN || newValue.isInfinity) 1000000 else newValue.toFloat
+    }
+
+    override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
+      val result = buffer(to)
+      val source1 = buffer(i1)
+      val source2 = buffer(i2)
+
+      var i = 0
+      while (i < result.size) {
+        result(i) = {
+          val newValue = source1(i) / source2(i)
+          if (newValue.isNaN || newValue.isInfinity) 1000000 else newValue.toFloat
+        }
+        i = i + 1
+      }
     }
 
     override def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action = {
@@ -253,6 +438,31 @@ object Action {
     override def evaluate(values: Array[Double]): Unit = {
       if (values(i1) > values(i2)) {
         action.evaluate(values)
+      }
+    }
+
+    var newColumn: Array[Double] = null
+
+    override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
+      val outIndex = assignTo
+      val oldColumn = buffer(outIndex)
+      val newColumn = oldColumn.clone()
+
+      buffer(outIndex) = newColumn
+
+      action.evaluateSIMD(buffer)
+
+      buffer(outIndex) = oldColumn
+
+      val source1 = buffer(i1)
+      val source2 = buffer(i2)
+
+      var i = 0
+      while (i < oldColumn.size) {
+        if (source1(i) > source2(i)) {
+          oldColumn(i) = newColumn(i)
+        }
+        i = i + 1
       }
     }
 

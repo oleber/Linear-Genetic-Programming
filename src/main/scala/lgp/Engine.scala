@@ -7,31 +7,32 @@ import lgp.Model.{Individual, Problem}
 import scala.util.Random
 
 object Engine {
+
   case class MutationToCrossover(mutation: Mutation) extends Crossover {
     override def crossover(individual1: Individual, individual2: Individual): Individual = {
       mutation.mutation(individual1)
     }
   }
+
 }
 
-class Engine[SAMPLE](
-                      crossovers: Vector[Crossover],
-                      mutations: Vector[Mutation],
-                      evaluator: Evaluator[SAMPLE],
-                      learner: Learner[SAMPLE]
-                    ) {
+class Engine[SAMPLE <: Sample, BUFFER](
+                                        crossovers: Vector[Crossover],
+                                        mutations: Vector[Mutation],
+                                        evaluator: Evaluator[SAMPLE, BUFFER],
+                                        learner: Learner[SAMPLE, BUFFER]
+                                      ) {
   val startTime: Long = System.currentTimeMillis()
 
   val allChanges: Vector[Crossover] = crossovers ++ mutations.map(MutationToCrossover.apply)
 
   def learn(
              problem: Problem,
-             samples: List[SAMPLE],
-             test: List[SAMPLE]
+             samples: SAMPLE,
+             test: SAMPLE
            )(implicit random: Random): List[Individual] = {
     @scala.annotation.tailrec
     def step(missingSteps: Int, population: List[Individual]): List[Individual] = {
-
       if (missingSteps == 0)
         population
       else {
@@ -50,11 +51,13 @@ class Engine[SAMPLE](
         println(s"   test baseline: ${evaluator.baseline(test)}")
         println(missingSteps)
 
+        val buffer = evaluator.createBuffer(samples)
+
         newEvaluatedPopulation
           .sortBy(_.cost)
           .take(informTop)
           .foreach({ case EvaluatedIndividual(individual, cost) =>
-            val testCost = evaluator.evaluate(individual, test)
+            val testCost = evaluator.evaluateSingle(individual, test, buffer)
 
             println(f"${cost / samples.size}%.2f\t${testCost.cost / samples.size}%.2f\t${(testCost.cost / cost - 1) * 100}%.1f%%\t${individual.actions.size}\t${individual.effectiveActions.size}\t${individual.effectiveActions.reverse}")
             individual

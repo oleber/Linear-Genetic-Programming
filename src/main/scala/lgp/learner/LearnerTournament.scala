@@ -6,25 +6,23 @@ import lgp._
 
 import scala.util.Random
 
-class LearnerTournament[SAMPLE](implicit problem: Problem, random: Random) extends Learner[SAMPLE] {
+class LearnerTournament[SAMPLE, BUFFER](implicit problem: Problem, random: Random) extends Learner[SAMPLE, BUFFER] {
 
   override def learn(
                       population: List[Model.Individual],
-                      samples: List[SAMPLE],
+                      samples: SAMPLE,
                       crossovers: Vector[Crossover],
-                      evaluator: Evaluator[SAMPLE]
+                      evaluator: Evaluator[SAMPLE, BUFFER]
                     ): List[EvaluatedIndividual] = {
 
-    def tournament(
-                   participants: List[Individual],
-                   samples: List[SAMPLE]
-                 )(implicit random: Random): List[EvaluatedIndividual] = {
+    val buffer = evaluator.createBuffer(samples)
 
+    def tournament(participants: List[Individual], samples: SAMPLE): List[EvaluatedIndividual] = {
       if (participants.size != 4) {
-        evaluator.evaluate(participants, samples)
+        evaluator.evaluate(participants, samples, buffer)
       } else {
         val sortedParticipants = evaluator
-          .evaluate(participants, samples)
+          .evaluate(participants, samples, buffer)
           .sortBy(_.cost)
 
         val parent1 :: parent2 :: _ = sortedParticipants
@@ -34,7 +32,8 @@ class LearnerTournament[SAMPLE](implicit problem: Problem, random: Random) exten
 
         val newIndividuals = evaluator.evaluate(
           createNewIndividuals(parent1.individual, parent2.individual, simplifiedParents, Nil, crossovers, 0),
-          samples
+          samples,
+          buffer
         )
 
         (newIndividuals ++ sortedParticipants).sortBy(_.cost).take(4)

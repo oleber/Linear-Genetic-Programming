@@ -6,12 +6,13 @@ import lgp._
 
 import scala.util.Random
 
-class LearnerIsland[SAMPLE](groupSize: Int, learner: Learner[SAMPLE])(implicit problem: Problem, random: Random) extends Learner[SAMPLE] {
+class LearnerIsland[SAMPLE, BUFFER](groupSize: Int, learner: Learner[SAMPLE, BUFFER])
+                                   (implicit problem: Problem, random: Random) extends Learner[SAMPLE, BUFFER] {
   override def learn(
                       population: List[Model.Individual],
-                      samples: List[SAMPLE],
+                      samples: SAMPLE,
                       crossovers: Vector[Crossover],
-                      evaluator: Evaluator[SAMPLE]
+                      evaluator: Evaluator[SAMPLE, BUFFER]
                     ): List[EvaluatedIndividual] = {
 
     val groups = population
@@ -27,12 +28,9 @@ class LearnerIsland[SAMPLE](groupSize: Int, learner: Learner[SAMPLE])(implicit p
 
     val groupsUpdates = for {
       index <- groups.indices
+      patch = List(groups((index + 1) % groups.size)(random.nextInt(groupSize)))
     } yield {
-      groups(index).patch(
-        groups(index).size - 1,
-        List(groups((index + 1) % groups.size)(random.nextInt(groupSize))),
-        1
-      )
+      groups(index).patch(groups(index).size - 1, patch, 1)
     }
 
     groupsUpdates.flatten.toList

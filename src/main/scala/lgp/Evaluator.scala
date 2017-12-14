@@ -7,11 +7,13 @@ object Evaluator {
   case class EvaluatedIndividual(individual: Individual, cost: Double)
 }
 
-trait Evaluator[SAMPLE] {
-  def evaluate(individual: Individual, samples: List[SAMPLE]): EvaluatedIndividual
-  def baseline(samples: List[SAMPLE]): Double
+trait Evaluator[SAMPLE, BUFFER] {
+  def createBuffer(samples: SAMPLE): BUFFER
 
-  def evaluate(individuals: List[Individual], samples: List[SAMPLE]): List[EvaluatedIndividual] = {
-    individuals.map(individual => evaluate(individual, samples))
+  def evaluateSingle(individual: Individual, samples: SAMPLE, buffer: BUFFER): EvaluatedIndividual
+  def baseline(samples: SAMPLE): Double
+
+  def evaluate(individuals: List[Individual], samples: SAMPLE, buffer: BUFFER): List[EvaluatedIndividual] = {
+    individuals.map(individual => evaluateSingle(individual, samples, buffer))
   }
 }
