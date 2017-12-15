@@ -1,7 +1,7 @@
 package lgp.learner
 
 import lgp.Evaluator.EvaluatedIndividual
-import lgp.Model.Problem
+import lgp.Model.{Individual, Problem}
 import lgp._
 
 import scala.util.Random
@@ -10,19 +10,18 @@ class LearnerIsland[SAMPLE, BUFFER](groupSize: Int, learner: Learner[SAMPLE, BUF
                                    (implicit problem: Problem, random: Random) extends Learner[SAMPLE, BUFFER] {
   override def learn(
                       population: List[Model.Individual],
-                      samples: SAMPLE,
+                      samples1: SAMPLE,
+                      samples2: SAMPLE,
                       crossovers: Vector[Crossover],
                       evaluator: Evaluator[SAMPLE, BUFFER]
-                    ): List[EvaluatedIndividual] = {
+                    ): List[Individual] = {
 
     val groups = population
       .grouped(groupSize)
       .toList
       .par
       .map({ subPopulation =>
-        learner
-          .learn(subPopulation, samples, crossovers, evaluator)
-          .sortBy(_.cost)
+        learner.learn(subPopulation, samples1, samples2, crossovers, evaluator)
       })
       .seq
 

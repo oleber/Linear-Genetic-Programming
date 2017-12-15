@@ -99,9 +99,10 @@ object HelloApp extends App {
       ),
       evaluator = new EvaluatorRegressionSIMD,
 //      learner = new LearnerIsland(100, new LearnerTournament)
-      learner = new LearnerIsland(20, new LearnerChooseTopK)
+      learner = new LearnerIsland(25, new LearnerChooseTopK)
     ).learn(
       problem,
+      SampleRegressionSIMD(resizedSamples().toArray),
       SampleRegressionSIMD(resizedSamples().toArray),
       SampleRegressionSIMD(resizedSamples().toArray)
     )
@@ -123,7 +124,12 @@ object HelloApp extends App {
       ),
       evaluator = new EvaluatorRegression,
       learner = new LearnerIsland(100, new LearnerTournament)
-    ).learn(problem, SampleRegressionList(resizedSamples()), SampleRegressionList(resizedSamples()))
+    ).learn(
+      problem,
+      SampleRegressionList(resizedSamples()),
+      SampleRegressionList(resizedSamples()),
+      SampleRegressionList(resizedSamples())
+    )
 
   }
 

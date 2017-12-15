@@ -1,6 +1,5 @@
 package lgp.learner
 
-import lgp.Evaluator.EvaluatedIndividual
 import lgp._
 import lgp.Model.{Individual, Problem}
 
@@ -11,10 +10,11 @@ class LearnerChooseTopK[SAMPLE, BUFFER](keepTopPercentage: Int = 25)
 
   override def learn(
                       population: List[Individual],
-                      samples: SAMPLE,
+                      samples1: SAMPLE,
+                      samples2: SAMPLE,
                       crossovers: Vector[Crossover],
                       evaluator: Evaluator[SAMPLE, BUFFER]
-                    ): List[EvaluatedIndividual] = {
+                    ): List[Individual] = {
     val populationLength = population.length
 
     def generateChildren(top: Array[Individual], generate: Int): List[Individual] = {
@@ -28,10 +28,10 @@ class LearnerChooseTopK[SAMPLE, BUFFER](keepTopPercentage: Int = 25)
       }
     }
 
-    val buffer = evaluator.createBuffer(samples)
+    val buffer = evaluator.createBuffer(samples1)
 
     val sortedPopulation = evaluator
-      .evaluate(population, samples, buffer)
+      .evaluate(population, samples1, buffer)
       .sortBy(_.cost)
 
     val keepTop = populationLength * keepTopPercentage / 100
@@ -40,10 +40,13 @@ class LearnerChooseTopK[SAMPLE, BUFFER](keepTopPercentage: Int = 25)
     val generate = populationLength - keepTop
 
     val children = generateChildren(top.map(_.individual), generate)
-    val evaluatedChildren = (evaluator.evaluate(children, samples, buffer) ++ sortedPopulation.takeRight(generate))
+
+    val remainingIndividuals = children ++ sortedPopulation.takeRight(generate).map(_.individual)
+    val evaluatedChildren = evaluator
+      .evaluate(remainingIndividuals, samples2, buffer)
       .sortBy(_.cost)
       .take(generate)
 
-    evaluatedChildren ++ top
+    (evaluatedChildren ++ top).map(_.individual)
   }
 }

@@ -28,51 +28,70 @@ class Engine[SAMPLE <: Sample, BUFFER](
 
   def learn(
              problem: Problem,
-             samples: SAMPLE,
+             samples1: SAMPLE,
+             samples2: SAMPLE,
              test: SAMPLE
-           )(implicit random: Random): List[Individual] = {
+           )(implicit random: Random): Individual = {
+    def dumpIndividual(bestIndividual: EvaluatedIndividual, evaluatedIndividual: EvaluatedIndividual): Unit = {
+      val EvaluatedIndividual(individual, cost) = evaluatedIndividual
+      val compare = 100 * (evaluatedIndividual.cost - bestIndividual.cost) / bestIndividual.cost
+
+      println(f"${cost / samples1.size}%.02f\t$compare%.02f%%\t${individual.actions.size}\t${individual.effectiveActions.size}\t${individual.effectiveActions.reverse}")
+    }
+
     @scala.annotation.tailrec
-    def step(missingSteps: Int, population: List[Individual]): List[Individual] = {
+    def step(missingSteps: Int, population: List[Individual], bestIndividual: Individual): Individual = {
       if (missingSteps == 0)
-        population
+        bestIndividual
       else {
-        val newEvaluatedPopulation = learner.learn(
+        val newPopulation = learner.learn(
           population = population,
-          samples = samples,
+          samples1 = samples1,
+          samples2 = samples2,
           crossovers = allChanges,
           evaluator = evaluator
         )
 
         val informTop = 3
 
+        val newEvaluatedPopulation = (
+          for {
+            group <- newPopulation.grouped(100).toList.par
+            buffer = evaluator.createBuffer(test)
+            individual <- group
+          } yield evaluator.evaluateSingle(individual, test, buffer)
+          ).seq
+
+        val maxEvaluatedIndividual = newEvaluatedPopulation.minBy(_.cost)
+
+        val bestEvaluatedIndividual = evaluator.evaluateSingle(bestIndividual, test, evaluator.createBuffer(test))
+        val newBestIndividual = List(bestEvaluatedIndividual, maxEvaluatedIndividual).minBy(_.cost)
+
         println("-----------------------------------------------------------------------------")
         println(s"Population Size: ${population.length}")
 
         println(s"${(System.currentTimeMillis() - startTime) / (problem.numberOfSteps - missingSteps + 1)} msec")
 
-        println(s"samples baseline: ${evaluator.baseline(samples)}")
+        println(s"samples baseline: ${evaluator.baseline(samples1)}")
         println(s"   test baseline: ${evaluator.baseline(test)}")
         println(missingSteps)
 
-        val buffer = evaluator.createBuffer(samples)
+        println("Top:")
+        dumpIndividual(bestEvaluatedIndividual, newBestIndividual)
 
+        println("This Generation:")
         newEvaluatedPopulation
           .sortBy(_.cost)
           .take(informTop)
-          .foreach({ case EvaluatedIndividual(individual, cost) =>
-            val testCost = evaluator.evaluateSingle(individual, test, buffer)
+          .foreach(individual => dumpIndividual(bestEvaluatedIndividual, individual))
 
-            println(f"${cost / samples.size}%.2f\t${testCost.cost / samples.size}%.2f\t${(testCost.cost / cost - 1) * 100}%.1f%%\t${individual.actions.size}\t${individual.effectiveActions.size}\t${individual.effectiveActions.reverse}")
-            individual
-          })
-
-        step(missingSteps - 1, newEvaluatedPopulation.map(_.individual))
+        step(missingSteps - 1, newPopulation, newBestIndividual.individual)
       }
     }
 
     val initialPopulation = for {_ <- 1 to problem.numberOfCandidates} yield problem.generateIndividual
 
-    step(problem.numberOfSteps, initialPopulation.toList)
+    step(problem.numberOfSteps, initialPopulation.toList, problem.generateIndividual)
   }
 
 }

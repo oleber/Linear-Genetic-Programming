@@ -1,8 +1,6 @@
 package lgp
 
-import lgp.Evaluator.EvaluatedIndividual
 import lgp.Model.{Individual, Problem}
-
 import scala.util.Random
 
 trait Learner[SAMPLE, BUFFER] {
@@ -40,8 +38,9 @@ trait Learner[SAMPLE, BUFFER] {
 
   def learn(
              population: List[Individual],
-             samples: SAMPLE,
+             samples1: SAMPLE,
+             samples2: SAMPLE,
              crossovers: Vector[Crossover],
              evaluator: Evaluator[SAMPLE, BUFFER]
-           ): List[EvaluatedIndividual]
+           ): List[Individual]
 }
