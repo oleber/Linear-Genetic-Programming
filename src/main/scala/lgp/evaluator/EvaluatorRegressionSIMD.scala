@@ -36,6 +36,8 @@ class EvaluatorRegressionSIMD(implicit problem: Problem, random: Random) extends
   }
 
   override def baseline(samples: SampleRegressionSIMD): Double = {
-    0
+    val mean = samples.expecteds.sum / samples.expecteds.size
+
+    samples.expecteds.map(expected => (expected - mean)*(expected - mean)).sum / samples.expecteds.size
   }
 }
