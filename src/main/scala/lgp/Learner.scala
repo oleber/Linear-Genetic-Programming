@@ -7,17 +7,14 @@ import scala.util.Random
 
 trait Learner[SAMPLE, BUFFER] {
 
-  @scala.annotation.tailrec
-  final def createNewIndividuals(
-                                  parent1: Individual,
-                                  parent2: Individual,
-                                  simplifiedParents: Set[Vector[Action]],
-                                  children: List[Individual],
-                                  crossovers: Vector[Crossover],
-                                  iteration: Int
-                          )(implicit problem: Problem, random: Random): List[Individual] = {
-    def createNewIndividual(parent1: Individual, parent2: Individual, crossovers: Vector[Crossover])
-                           (implicit problem: Problem, random: Random): Individual = {
+  def createNewIndividual(
+                           parent1: Individual,
+                           parent2: Individual,
+                           crossovers: Vector[Crossover]
+                         )(implicit problem: Problem, random: Random): Individual = {
+    val simplifiedParents = Set(parent1.effectiveActions, parent2.effectiveActions)
+
+    def create(): Individual = {
       val crossover = crossovers(random.nextInt(crossovers.size))
       val newIndividual = if (random.nextInt(2) == 0)
         crossover.crossover(parent1, parent2)
@@ -27,21 +24,18 @@ trait Learner[SAMPLE, BUFFER] {
       newIndividual
     }
 
-    if (children.length == 2 || iteration > 10) {
-      children
-    } else {
-      val newIndividual = createNewIndividual(parent1, parent2, crossovers)
-
-      val newChildren = if (simplifiedParents.contains(newIndividual.effectiveActions)) {
-        children
-      } else if (!problem.isValid(newIndividual)) {
-        children
+    def step(iteration: Int): Individual = {
+      val newIndividual = create()
+      if (iteration > 10) {
+        newIndividual
+      } else if (simplifiedParents.contains(newIndividual.effectiveActions)) {
+        step(iteration + 1)
       } else {
-        newIndividual :: children
+        newIndividual
       }
-
-      createNewIndividuals(parent1, parent2, simplifiedParents, newChildren, crossovers, iteration + 1)
     }
+
+    step(0)
   }
 
   def learn(
@@ -49,5 +43,5 @@ trait Learner[SAMPLE, BUFFER] {
              samples: SAMPLE,
              crossovers: Vector[Crossover],
              evaluator: Evaluator[SAMPLE, BUFFER]
-           ): (List[EvaluatedIndividual])
+           ): List[EvaluatedIndividual]
 }

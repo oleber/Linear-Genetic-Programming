@@ -31,7 +31,10 @@ class LearnerTournament[SAMPLE, BUFFER](implicit problem: Problem, random: Rando
           .map(_.individual.effectiveActions)
 
         val newIndividuals = evaluator.evaluate(
-          createNewIndividuals(parent1.individual, parent2.individual, simplifiedParents, Nil, crossovers, 0),
+          List(
+            createNewIndividual(parent1.individual, parent2.individual, crossovers),
+            createNewIndividual(parent2.individual, parent1.individual, crossovers)
+          ),
           samples,
           buffer
         )

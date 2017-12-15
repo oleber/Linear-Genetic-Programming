@@ -44,7 +44,10 @@ class Engine[SAMPLE <: Sample, BUFFER](
         )
 
         val informTop = 3
+
         println("-----------------------------------------------------------------------------")
+        println(s"Population Size: ${population.length}")
+
         println(s"${(System.currentTimeMillis() - startTime) / (problem.numberOfSteps - missingSteps + 1)} msec")
 
         println(s"samples baseline: ${evaluator.baseline(samples)}")

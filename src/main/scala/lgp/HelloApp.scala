@@ -4,7 +4,7 @@ import lgp.Action._
 import lgp.Model.{ActionGenerators, Problem}
 import lgp.crossover.{CrossoverEffectiveRandom, CrossoverHomogeneous, CrossoverRandom}
 import lgp.evaluator.{EvaluatorRegression, EvaluatorRegressionSIMD}
-import lgp.learner.{LearnerIsland, LearnerTournament}
+import lgp.learner.{LearnerIsland, LearnerChooseTopK, LearnerTournament}
 import lgp.mutation._
 import lgp.sample.SampleRegression.SampleRegressionList
 import lgp.sample.{SampleRegression, SampleRegressionSIMD}
@@ -98,7 +98,8 @@ object HelloApp extends App {
         new MutationEffective
       ),
       evaluator = new EvaluatorRegressionSIMD,
-      learner = new LearnerIsland(100, new LearnerTournament)
+//      learner = new LearnerIsland(100, new LearnerTournament)
+      learner = new LearnerIsland(20, new LearnerChooseTopK)
     ).learn(
       problem,
       SampleRegressionSIMD(resizedSamples().toArray),
