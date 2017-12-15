@@ -9,7 +9,7 @@ class MutationAddCommand(implicit problem: Problem, random: Random) extends Muta
   override def mutation(individual: Model.Individual): Model.Individual = {
 
     if (problem.maxCandidateSize > individual.actions.size) {
-      val nextAction = problem.randomAction
+      val nextAction = createEffectiveAction(individual)
       if (individual.actions.nonEmpty) {
         individual.copy(
           actions = individual.actions.patch(

@@ -11,7 +11,7 @@ class MutationRandomPoint(implicit problem: Problem, random: Random) extends Mut
       individual.copy(
         actions = individual.actions.patch(
           random.nextInt(individual.actions.size),
-          Seq(problem.randomAction),
+          Seq(createEffectiveAction(individual)),
           1
         )
       )

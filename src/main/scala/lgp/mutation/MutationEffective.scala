@@ -7,29 +7,18 @@ import scala.util.Random
 
 class MutationEffective(implicit problem: Problem, random: Random) extends Mutation {
   override def mutation(individual: Model.Individual): Model.Individual = {
-    val effectiveRegisters: Set[Int] = (
-      individual.effectiveActions.flatMap(_.assignFrom) ++ problem.outputIndexes
-      ).toSet
-
-    @scala.annotation.tailrec
-    def effectiveAction: Action = {
-      val nextAction: Action = problem.randomAction
-      if (effectiveRegisters.contains(nextAction.assignTo))
-        nextAction
-      else
-        effectiveAction
-    }
+    val effectiveAction = createEffectiveAction(individual)
 
     if (individual.actions.isEmpty) {
       individual.copy(actions = Vector(effectiveAction))
     } else {
-      individual.copy(
-        actions = individual.actions.patch(
-          random.nextInt(individual.actions.size),
-          Seq(effectiveAction),
-          1
-        )
+      val newActions = individual.actions.patch(
+        random.nextInt(individual.actions.size),
+        Seq(effectiveAction),
+        1
       )
+
+      individual.copy(actions = newActions)
     }
 
   }
