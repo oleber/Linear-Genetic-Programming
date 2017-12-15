@@ -70,7 +70,7 @@ class Engine[SAMPLE <: Sample, BUFFER](
         println("-----------------------------------------------------------------------------")
         println(s"Population Size: ${population.length}")
 
-        println(s"${(System.currentTimeMillis() - startTime) / (problem.numberOfSteps - missingSteps + 1)} msec")
+        println(s"${(System.currentTimeMillis - startTime) / (problem.numberOfSteps - missingSteps + 1)} microseconds")
 
         println(s"samples baseline: ${evaluator.baseline(samples1)}")
         println(s"   test baseline: ${evaluator.baseline(test)}")

@@ -33,7 +33,7 @@ object Action {
     override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
       val result = buffer(to)
       var i = 0
-      while (i < result.size) {
+      while (i < result.length) {
         result(i) = Math.PI
         i = i + 1
       }
@@ -52,7 +52,7 @@ object Action {
     override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
       val result = buffer(to)
       var i = 0
-      while (i < result.size) {
+      while (i < result.length) {
         result(i) = Math.E
         i = i + 1
       }
@@ -71,7 +71,7 @@ object Action {
     override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
       val result = buffer(to)
       var i = 0
-      while (i < result.size) {
+      while (i < result.length) {
         result(i) = 2
         i = i + 1
       }
@@ -91,7 +91,7 @@ object Action {
     override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
       val result = buffer(to)
       var i = 0
-      while (i < result.size) {
+      while (i < result.length) {
         result(i) = 1
         i = i + 1
       }
@@ -110,7 +110,7 @@ object Action {
     override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
       val result = buffer(to)
       var i = 0
-      while (i < result.size) {
+      while (i < result.length) {
         result(i) = 0
         i = i + 1
       }
@@ -129,7 +129,7 @@ object Action {
     override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
       val result = buffer(to)
       var i = 0
-      while (i < result.size) {
+      while (i < result.length) {
         result(i) = -1
         i = i + 1
       }
@@ -148,7 +148,7 @@ object Action {
     override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
       val result = buffer(to)
       var i = 0
-      while (i < result.size) {
+      while (i < result.length) {
         result(i) = -2
         i = i + 1
       }
@@ -173,7 +173,7 @@ object Action {
     override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
       val result = buffer(to)
       var i = 0
-      while (i < result.size) {
+      while (i < result.length) {
         result(i) = value
         i = i + 1
       }
@@ -202,7 +202,7 @@ object Action {
       val source1 = buffer(i1)
 
       var i = 0
-      while (i < result.size) {
+      while (i < result.length) {
         result(i) = Math.cos(source1(i))
         i = i + 1
       }
@@ -226,7 +226,7 @@ object Action {
       val source1 = buffer(i1)
 
       var i = 0
-      while (i < result.size) {
+      while (i < result.length) {
         result(i) = Math.sin(source1(i))
         i = i + 1
       }
@@ -254,7 +254,7 @@ object Action {
       val source1 = buffer(i1)
 
       var i = 0
-      while (i < result.size) {
+      while (i < result.length) {
         result(i) = {
           val value = source1(i1)
           val newValue = if (value > 0) Math.sqrt(value) else -Math.sqrt(-value)
@@ -286,7 +286,7 @@ object Action {
       val source1 = buffer(i1)
 
       var i = 0
-      while (i < result.size) {
+      while (i < result.length) {
         result(i) = {
           val value = source1(i1)
           val newValue = if (value > 0) Math.log(value) else -Math.log(-value)
@@ -326,7 +326,7 @@ object Action {
       val source2 = buffer(i2)
 
       var i = 0
-      while (i < result.size) {
+      while (i < result.length) {
         result(i) = source1(i) + source2(i)
         i = i + 1
       }
@@ -354,7 +354,7 @@ object Action {
       val source2 = buffer(i2)
 
       var i = 0
-      while (i < result.size) {
+      while (i < result.length) {
         result(i) = source1(i) - source2(i)
         i = i + 1
       }
@@ -382,7 +382,7 @@ object Action {
       val source2 = buffer(i2)
 
       var i = 0
-      while (i < result.size) {
+      while (i < result.length) {
         result(i) = source1(i) * source2(i)
         i = i + 1
       }
@@ -412,7 +412,7 @@ object Action {
       val source2 = buffer(i2)
 
       var i = 0
-      while (i < result.size) {
+      while (i < result.length) {
         result(i) = {
           val newValue = source1(i) / source2(i)
           if (newValue.isNaN || newValue.isInfinity) 1000000 else newValue.toFloat
@@ -443,7 +443,7 @@ object Action {
       }
     }
 
-    var newColumn: Array[Double] = null
+    var newColumn: Array[Double] = _
 
     override def evaluateSIMD(buffer: Array[Array[Double]]): Unit = {
       val outIndex = assignTo
@@ -460,7 +460,7 @@ object Action {
       val source2 = buffer(i2)
 
       var i = 0
-      while (i < oldColumn.size) {
+      while (i < oldColumn.length) {
         if (source1(i) > source2(i)) {
           oldColumn(i) = newColumn(i)
         }

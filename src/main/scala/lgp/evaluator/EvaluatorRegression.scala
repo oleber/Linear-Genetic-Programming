@@ -11,7 +11,7 @@ import scala.util.Random
 class EvaluatorRegression(implicit problem: Problem, random: Random)
   extends Evaluator[SampleRegressionList, Array[Double]] {
 
-  override def createBuffer(samples: SampleRegressionList) = {
+  override def createBuffer(samples: SampleRegressionList): Array[Double] = {
     Array.ofDim[Double](problem.memorySize)
   }
 

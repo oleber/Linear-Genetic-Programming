@@ -9,7 +9,7 @@ import scala.util.Random
 
 class EvaluatorRegressionSIMD(implicit problem: Problem, random: Random) extends Evaluator[SampleRegressionSIMD, Array[Array[Double]]] {
   override def createBuffer(samples: SampleRegressionSIMD): Array[Array[Double]] = {
-    Array.ofDim[Double](samples.columns.size, samples.columns.head.size)
+    Array.ofDim[Double](samples.columns.length, samples.columns.head.length)
   }
 
   override def evaluateSingle(
@@ -17,16 +17,16 @@ class EvaluatorRegressionSIMD(implicit problem: Problem, random: Random) extends
                                samples: SampleRegressionSIMD,
                                buffer: Array[Array[Double]]
                              ): EvaluatedIndividual = {
-    val SampleRegressionSIMD(columns, expecteds) = samples
+    val SampleRegressionSIMD(columns, expectedValues) = samples
 
     for ((column, bufferColumn) <- columns zip buffer) {
-      Array.copy(column, 0, bufferColumn, 0, column.size)
+      Array.copy(column, 0, bufferColumn, 0, column.length)
     }
 
     individual.evaluateSIMD(buffer)
 
     val costs = for {
-      (expected, result) <- expecteds zip buffer(0)
+      (expected, result) <- expectedValues zip buffer(0)
       error = expected - result
     } yield error * error
 
@@ -36,8 +36,8 @@ class EvaluatorRegressionSIMD(implicit problem: Problem, random: Random) extends
   }
 
   override def baseline(samples: SampleRegressionSIMD): Double = {
-    val mean = samples.expecteds.sum / samples.expecteds.size
+    val mean = samples.expectedValues.sum / samples.expectedValues.length
 
-    samples.expecteds.map(expected => (expected - mean)*(expected - mean)).sum / samples.expecteds.size
+    samples.expectedValues.map(expected => (expected - mean)*(expected - mean)).sum / samples.expectedValues.length
   }
 }

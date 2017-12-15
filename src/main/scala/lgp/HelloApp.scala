@@ -16,7 +16,7 @@ object HelloApp extends App {
 
   val inputSize = 10
 
-  def problemBuider = Problem(
+  def problemBuilder = Problem(
     outputSize = 1,
     memorySize = 40,
     minCandidateSize = 1,
@@ -78,7 +78,7 @@ object HelloApp extends App {
     }
   }
 
-  implicit val problem: Problem = problemBuider
+  implicit val problem: Problem = problemBuilder
 
   val startTimeMillis = System.currentTimeMillis()
 
