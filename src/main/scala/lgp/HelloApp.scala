@@ -2,11 +2,12 @@ package lgp
 
 import lgp.Action._
 import lgp.Model.{ActionGenerators, Problem}
-import lgp.SampleRegression.SampleRegressionList
 import lgp.crossover.{CrossoverEffectiveRandom, CrossoverHomogeneous, CrossoverRandom}
 import lgp.evaluator.{EvaluatorRegression, EvaluatorRegressionSIMD}
 import lgp.learner.{LearnerIsland, LearnerTournament}
 import lgp.mutation._
+import lgp.sample.SampleRegression.SampleRegressionList
+import lgp.sample.{SampleRegression, SampleRegressionSIMD}
 
 import scala.util.Random
 
@@ -81,7 +82,7 @@ object HelloApp extends App {
 
   val startTimeMillis = System.currentTimeMillis()
 
-  if (false) {
+  if (true) {
 
     new Engine(
       crossovers = Vector(

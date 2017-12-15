@@ -2,8 +2,9 @@ package lgp.evaluator
 
 import lgp.Evaluator.EvaluatedIndividual
 import lgp.Model.{Individual, Problem}
-import lgp.SampleRegression.SampleRegressionList
-import lgp.{Evaluator, SampleRegression}
+import lgp.Evaluator
+import lgp.sample.SampleRegression
+import lgp.sample.SampleRegression.SampleRegressionList
 
 import scala.util.Random
 

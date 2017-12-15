@@ -1,6 +1,7 @@
-package lgp
+package lgp.sample
 
 import lgp.Model.Problem
+import lgp.Sample
 
 object SampleRegressionSIMD {
   def apply(sampleRegressions: Array[SampleRegression])(implicit problem: Problem): SampleRegressionSIMD = {

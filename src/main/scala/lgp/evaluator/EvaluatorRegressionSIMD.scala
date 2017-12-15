@@ -2,7 +2,8 @@ package lgp.evaluator
 
 import lgp.Evaluator.EvaluatedIndividual
 import lgp.Model.{Individual, Problem}
-import lgp.{Evaluator, SampleRegressionSIMD}
+import lgp.Evaluator
+import lgp.sample.SampleRegressionSIMD
 
 import scala.util.Random
 

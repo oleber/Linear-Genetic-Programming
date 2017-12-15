@@ -1,4 +1,6 @@
-package lgp
+package lgp.sample
+
+import lgp.Sample
 
 object SampleRegression {
   case class SampleRegressionList(list: List[SampleRegression]) extends Sample {
