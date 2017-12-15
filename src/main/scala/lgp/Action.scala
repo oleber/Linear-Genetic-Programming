@@ -15,6 +15,8 @@ trait Action {
   def evaluateSIMD(buffer: Array[Array[Double]]): Unit
 
   def microMutation(actionGeneratorsInput: ActionGeneratorsInput): Action
+
+  def cost: Int = 1
 }
 
 object Action {
@@ -474,6 +476,8 @@ object Action {
         case 3 => action
       }
     }
+
+    override def cost: Int = 10
 
     override def toString: String = s"if r$i1 > r$i2 then $action"
   }

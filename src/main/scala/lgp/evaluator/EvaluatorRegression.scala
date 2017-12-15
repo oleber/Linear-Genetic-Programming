@@ -30,7 +30,8 @@ class EvaluatorRegression(implicit problem: Problem, random: Random)
       error * error
     }
 
-    val sizeFactor = 1 + 0.00001 * individual.effectiveActions.size.toFloat / problem.maxCandidateSize.toFloat
+    val cost = individual.effectiveActions.map(_.cost).sum
+    val sizeFactor = 1 + 0.00001 * cost / problem.maxCandidateSize.toFloat
 
     EvaluatedIndividual(individual, costs.sum * sizeFactor)
   }
