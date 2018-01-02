@@ -3,8 +3,8 @@ package lgp
 import lgp.Action._
 import lgp.Model.{ActionGenerators, Problem}
 import lgp.crossover.{CrossoverEffectiveRandom, CrossoverHomogeneous, CrossoverRandom}
-import lgp.evaluator.{EvaluatorRegression, EvaluatorRegressionSIMD}
-import lgp.learner.{LearnerIsland, LearnerChooseTopK, LearnerTournament}
+import lgp.evaluator.{EvaluatorCached, EvaluatorRegression, EvaluatorRegressionSIMD}
+import lgp.learner.{LearnerChooseTopK, LearnerIsland, LearnerTournament}
 import lgp.mutation._
 import lgp.sample.SampleRegression.SampleRegressionList
 import lgp.sample.{SampleRegression, SampleRegressionSIMD}
@@ -97,7 +97,7 @@ object HelloApp extends App {
         new MutationAddCommand,
         new MutationEffective
       ),
-      evaluator = new EvaluatorRegressionSIMD,
+      evaluator = new EvaluatorCached(new EvaluatorRegressionSIMD),
 //      learner = new LearnerIsland(100, new LearnerTournament)
       learner = new LearnerIsland(25, new LearnerChooseTopK)
     ).learn(
@@ -122,7 +122,7 @@ object HelloApp extends App {
         new MutationAddCommand,
         new MutationEffective
       ),
-      evaluator = new EvaluatorRegression,
+      evaluator = new EvaluatorCached(new EvaluatorRegression),
       learner = new LearnerIsland(100, new LearnerTournament)
     ).learn(
       problem,
